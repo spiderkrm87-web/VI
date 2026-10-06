@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Anniversary Bros 🎮</title>
+    <!-- Font Pixel 8-Bit khas NES -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Press Start 2P', cursive;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* FRAME RASIO PRESISI 9:16 LENGKAP BINGKAI GAMEBOY */
+        .game-frame {
+            width: 100vw;
+            height: 100vh;
+            max-width: 420px;
+            max-height: 746px;
+            aspect-ratio: 9 / 16;
+            background: #000;
+            border: 6px solid #222;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(255, 230, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* --- HALAMAN 1: TITLE SCREEN --- */
+        #slide1 {
+            background: linear-gradient(to bottom, #5c94fc 60%, #e09400 60%, #e09400 65%, #00a200 65%);
+        }
+
+        .mario-title {
+            color: #ffe600;
+            font-size: 1rem;
+            text-shadow: 3px 3px #000, -2px -2px #e60000;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-pixel {
+            background: #e60000;
+            color: #fff;
+            border: 4px solid #fff;
+            padding: 12px 18px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 6px #800000;
+            border-radius: 6px;
+        }
+
+        .btn-pixel:active {
+            box-shadow: 0 2px #800000;
+            transform: translateY(4px);
+        }
+
+        .pass-box {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        input[type="password"] {
+            width: 8
