@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Anniversary Bros 🎮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* FRAME VIRTUAL SCREEN (LAYAR HP 9:16) */
+        .game-screen {
+            width: 100vw;
+            height: 100vh;
+            max-width: 414px;
+            max-height: 736px;
+            background: #87ceeb; /* Warna langit cerah */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 25px rgba(0,0,0,0.9);
+            border: 2px solid #000;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 15px;
+            z-index: 2;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        /* ELEMEN DEKORASI PIXEL HALAMAN 1 (PRESISI DARI VIDEO) */
+        .pixel-cloud {
+            position: absolute;
+            background: #ffffff;
+            border: 3px solid #71b2d9;
+            border-radius: 8px;
+            box-shadow: -3px 3px 0 #71b2d9;
+        }
+        .cloud-top-left { width: 85px; height: 35px; top: 15px; left: 10px; }
+        .cloud-top-right { width: 105px; height: 42px; top: 25px; right: 10px; }
+        .cloud-mid-left { width: 75px; height: 30px; top: 140px; left: 25px; }
+        .cloud-mid-right { width: 90px; height: 35px; top: 210px; right: 15px; }
+
+        /* BAGIAN BAWAH (RUMPUT, POHON, KUCING) */
+        .ground-area {
+            width: 100%;
+            height: 160px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .dirt-ground {
+            width: 100%;
+            height: 50px;
+            background: #8b4513;
+            border-top: 6px solid #32cd32;
+            position: absolute;
+            bottom: 0;
+            box-shadow: inset 0 4px 0 #228b22;
+        }
+
+        /* POHON KIRI */
+        .pixel-tree-left {
+            position: absolute;
+            bottom: 50px;
+            left: -10px;
+            width: 90px;
+            height: 110px;
+            background: #2ea02c;
+            border-radius: 50% 50% 20% 20%;
+            border: 4px solid #1a5e19;
+        }
+        .pixel-tree-left::after {
+            content: '';
+            position: absolute;
+            bottom: -25px;
+            left: 38px;
+            width: 15px;
+            height: 30px;
+            background: #5c2c0c;
+        }
+
+        /* POHON BONSAI KANAN */
+        .pixel-tree-right {
+            position: absolute;
+            bottom: 50px;
+            right: 10px;
+            width: 80px;
+            height: 95px;
+            background: #2ea02c;
+            border-radius: 40px 40px 10px 10px;
+            border: 4px solid #1a5e19;
+        }
+
+        /* KUCING UNGU PIXEL */
+        .cat-character {
+            position: absolute;
+            bottom: 52px;
+            left: 105px;
+            width: 55px;
+            height: 55px;
+            background: url('kucing.png.jpg') no-repeat center/contain;
+        }
+
+        /* JUDUL KUNING PIXEL */
+        .game-title {
+            color: #ffff00;
+            font-size: 1.25rem;
+            text-shadow: 4px 4px #000, -2px -2px #ff0000;
+            text-align: center;
+            margin-top: 80px;
+            line-height: 1.8;
+            letter-spacing: 2px;
+            z-index: 3;
+        }
+
+        /* TOMBOL KAPSUL HIJAU (SAMA KAYA FLAPPY BIRD USING PYTHON DI VIDEO) */
+        .btn-green-capsule {
+            background: #4caf50;
+            color: #ffffff;
+            border: 4px solid #1b5e20;
+            padding: 12px 20px;
+            font-size: 0.65rem;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 6px #1b5e20, inset 0 2px #a5d6a7;
+            z-index: 3;
+            margin-bottom: 230px;
+            text-align: center;
+            text-shadow: 2px 2px #000;
+        }
+
+        .btn-green-capsule:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px #1b5e20;
+        }
+
+        /* INPUT PASSCODE FORM */
+        .pass-container {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            z-index: 3;
+            margin-bottom: 200px;
+        }
+
+        input[type="password"] {
+            width: 170px;
+            padding: 10px;
+            font-size: 0.8rem;
+            text-align: center;
+            border: 4px solid #000;
+            border-radius: 8px;
+            outline: none;
+            background: #fff;
+        }
+
+        /* HALAMAN 2: MAP SELECTION */
+        #slide2 {
+            background: #5cbe42;
+            padding: 20px 10px;
+        }
+
+        .map-box {
+            width: 100%;
+            height: 82%;
+            background: rgba(255, 255, 255, 0.3);
+            border: 4px solid #000;
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .map-node-btn {
+            background: #ffffff;
+            border: 3px solid #000000;
+            padding: 12px 10px;
+            font-size: 0.58rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 3px 3px #000;
+            z-index: 2;
+            width: 78%;
+            text-align: center;
+        }
+
+        .cat-map-avatar {
+            width: 38px;
+            height: 38px;
+            position: absolute;
+            left: 8px;
+            z-index: 5;
+            transition: top 0.8s ease-in-out;
+        }
+
+        /* MODAL POPUP DISPLAY */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 99;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-body {
+            background: #fff;
+            border: 4px solid #000;
+            padding: 15px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 330px;
+            text-align: center;
+        }
+
+        .modal-body img, .modal-body video {
+            width: 100%;
+            max-height: 240px;
+            object-fit: contain;
+            border: 3px solid #000;
+            background: #000;
+            margin-bottom: 10px;
+        }
+
+        .modal-body p {
+            font-size: 0.55rem;
+            color: #000;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        /* HALAMAN 3: ENDING */
+        #slide3 {
+            background: #000000;
+            justify-content: center;
+        }
+
+        #slide3 video {
+            width: 100%;
+            max-height: 260px;
+            border: 3px solid #fff;
+            border-radius: 8px;
+        }
+
+        .error-text {
+            color: #d32f2f;
+            font-size: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-screen">
+
+        <!-- AUDIO BACKSOUND MARIO -->
+        <audio id="marioAudio" loop>
+            <source src="mario.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- BACKGROUND AWAN PIXEL HALAMAN 1 -->
+        <div class="pixel-cloud cloud-top-left"></div>
+        <div class="pixel-cloud cloud-top-right"></div>
+        <div class="pixel-cloud cloud-mid-left"></div>
+        <div class="pixel-cloud cloud-mid-right"></div>
+
+        <!-- DEKORASI RUMPUT, POHON, DAN KUCING -->
+        <div class="ground-area">
+            <div class="pixel-tree-left"></div>
+            <div class="cat-character"></div>
+            <div class="pixel-tree-right"></div>
+            <div class="dirt-ground"></div>
+        </div>
+
+        <!-- HALAMAN 1: MAIN SCREEN -->
+        <div class="slide active" id="slide1">
+            <div class="game-title">SUPER ANNIVERSARY<br>BROS! 🪷🌙</div>
+            
+            <button class="btn-green-capsule" id="startBtn" onclick="openPassBox()">PRESS START</button>
+
+            <div class="pass-container" id="passBox">
+                <input type="password" id="passInput" placeholder="PASSCODE" maxlength="4">
+                <span class="error-text" id="errorMsg">WRONG PASSCODE!</span>
+                <button class="btn-green-capsule" style="margin-bottom:0; padding:8px 16px;" onclick="validatePass()">ENTER</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN 2: MAP SELECT -->
+        <div class="slide" id="slide2">
+            <div style="color:#fff; text-shadow:2px 2px #000; font-size:0.75rem; margin-bottom:10px;">SELECT LEVEL 🗺</div>
+            
+            <div class="map-box">
+                <img src="kucing.png.jpg" id="catAvatar" class="cat-map-avatar" style="top: 80%;" alt="Cat Avatar">
+
+                <!-- MEMANGGIL FILE SESUAI EKSTENSI DARI DAFTAR KANUS -->
+                <button class="map-node-btn" onclick="playLevel(5, 'video–fotbar.mp4.mp4', 'LEVEL 5: FINISH! 🏆 Kongres tucil'', true)">LEVEL 5: FINISH 🏆</button>
+                <button class="map-node-btn" onclick="playLevel(4, 'video–kenangan.mp4.mp4', 'LEVEL 4:  🎥', true)">LEVEL 4: VIDEO 🎥</button>
+                <button class="map-node-btn" onclick="playLevel(3, 'foto3.jpg.jpg', 'LEVEL 3: ', false)">LEVEL 3: FOTO 3 📸</button>
+                <button class="map-node-btn" onclick="playLevel(2, 'foto2.jpg.png', 'LEVEL 2: ', false)">LEVEL 2: FOTO 2 📸</button>
+                <button class="map-node-btn" onclick="playLevel(1, 'foto1.jpg.png', 'LEVEL 1: '  false)">LEVEL 1: FOTO 1 📸</button>
+            </div>
+
+            <button class="btn-green-capsule" id="btnToSlide3" style="display:none; font-size:0.55rem; width:100%; margin-bottom:0;" onclick="goToSlide3()">NEXT: SPECIAL ENDING 🎬</button>
+        </div>
+
+        <!-- MODAL POPUP PREVIEW -->
+        <div class="modal-overlay" id="levelModal">
+            <div class="modal-body">
+                <div id="mediaContainer"></div>
+                <p id="modalText"></p>
+                <button class="btn-green-capsule" style="font-size:0.5rem; padding:8px 12px; margin-bottom:0;" onclick="closeModal()">CLOSE & NEXT</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN 3: ENDING VIDEO -->
+        <div class="slide" id="slide3">
+            <div class="game-title" style="font-size:0.75rem; margin-top:0; margin-bottom:15px;">HAPPY ANNIVERSARY! ❤️</div>
+            <video controls id="endingVideo">
+                <source src="video–penutup.mp4.mp4" type="video/mp4">
+            </video>
+            <p style="color:#fff; font-size:0.5rem; margin-top:15px; line-height:1.5; text-align:center;">
+                Makasih Banyak ya yank, karna kamu masih mau kasih aa kesempatan, aa luar biasa sayang sama kamu, maaf kalo aa sering buat kamu jengkel.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        const passCorrect = "1726";
+        const marioAudio = document.getElementById("marioAudio");
+
+        function openPassBox() {
+            document.getElementById("startBtn").style.display = "none";
+            document.getElementById("passBox").style.display = "flex";
+            marioAudio.play().catch(e => console.log("Audio ditahan browser"));
+        }
+
+        function validatePass() {
+            const input = document.getElementById("passInput").value;
+            if (input === passCorrect) {
+                document.getElementById("slide1").classList.remove("active");
+                document.getElementById("slide2").classList.add("active");
+            } else {
+                document.getElementById("errorMsg").style.display = "block";
+                document.getElementById("passInput").value = "";
+            }
+        }
+
+        function playLevel(lvl, mediaSrc, text, isVideo) {
+            const cat = document.getElementById("catAvatar");
+            const positions = {1: '66%', 2: '48%', 3: '32%', 4: '16%', 5: '2%'};
+            cat.style.top = positions[lvl];
+
+            setTimeout(() => {
+                const container = document.getElementById("mediaContainer");
+                if (isVideo) {
+                    container.innerHTML = `<video controls autoplay style="width:100%;"><source src="${mediaSrc}" type="video/mp4"></video>`;
+                } else {
+                    container.innerHTML = `<img src="${mediaSrc}" alt="Memory">`;
+                }
+                document.getElementById("modalText").innerText = text;
+                document.getElementById("levelModal").style.display = "flex";
+
+                if (lvl === 5) {
+                    document.getElementById("btnToSlide3").style.display = "block";
+                }
+            }, 800);
+        }
+
+        function closeModal() {
+            document.getElementById("levelModal").style.display = "none";
+            document.getElementById("mediaContainer").innerHTML = "";
+        }
+
+        function goToSlide3() {
+            document.getElementById("slide2").classList.remove("active");
+            document.getElementById("slide3").classList.add("active");
+            marioAudio.pause();
+            document.getElementById("endingVideo").play();
+        }
+    </script>
+</body>
+</html>
